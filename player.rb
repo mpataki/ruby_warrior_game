@@ -1,17 +1,39 @@
+require 'ruby-debug'
+
 class Player
 
-  def defend?(warrior)
-    return false if warrior.health > 3
-    unless warrior.feel.enemy?
-      warrior.rest!
+  @health = nil
+  @attacked = false
+
+  def taking_damage? warrior
+    if @health.nil?
+      @health = warrior.health
+      return false
+    elsif @health > warrior.health
+      @health = warrior.health
+      return true
     else
-      warrior.walk!(:backward)
+      @health = warrior.health
+      return false
+    end
+  end
+
+  def defend? warrior
+    return false if warrior.health > 3
+    if warrior.feel.enemy?
+      if /Sludge/.match(warrior.feel.to_s).nil?
+        return false
+      else
+        warrior.walk! :backward
+      end
+    else
+      warrior.rest! unless taking_damage? warrior
     end
     return true
   end
 
-  def play_turn(warrior)
-    return if defend?(warrior)
+  def play_turn warrior
+    return if defend? warrior
     if warrior.feel.enemy?
       warrior.attack!
     else
