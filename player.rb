@@ -33,6 +33,7 @@ class Player
   end
 
   def play_turn warrior
+    return warrior.rescue! if warrior.feel.captive?
     return if defend? warrior
     if warrior.feel.enemy?
       warrior.attack!
