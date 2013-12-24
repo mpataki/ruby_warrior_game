@@ -71,6 +71,7 @@ class Player
   def play_turn warrior
     init_turn warrior
     
+    return warrior.pivot! if @ahead.wall?
     return warrior.walk!(:backward) if @behind.empty? and !@back_wall
     
     return if rescue?
